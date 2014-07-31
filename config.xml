@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <module>
+            <name>debitnote</name>
+            <displayName><![CDATA[Lastschrift]]></displayName>
+            <version><![CDATA[0.1.2]]></version>
+            <description><![CDATA[Akzeptiert Zahlungen mit dem Lastschriftverfahren]]></description>
+            <author><![CDATA[]]></author>
+            <tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall>Sind Sie sicher, dass sie alle Details löschen wollen? Alle Kontoinformationen Ihrer Kunden werden gelöscht!</confirmUninstall>
+            <is_configurable>0</is_configurable>
+            <need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+        </module>
