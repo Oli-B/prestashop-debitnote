@@ -5,119 +5,84 @@
 	<title>Message from {shop_name}</title>
 </head>
 <body>
-	<table style="font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 550px;">
-<tbody>
+	<table style="font-family: Verdana,sans-serif; font-size: 10pt; color: #374953; width: 550px;">
+	<tbody>
 <tr>
 <td align="left"><a title="{shop_name}" href="{shop_url}"><img style="border: none;" src="{shop_logo}" alt="{shop_name}" /></a></td>
 </tr>
 <tr>
-<td>&nbsp;</td>
+<td align="left">{shop_name}, {shop_address1}, {shop_plz} {shop_city}</td>
 </tr>
-<tr>
-<td align="left">
-<p>Hallo <strong style="color: {color};">{firstname} {lastname}</strong>,</p>
-<p>vielen Dank f&uuml;r Ihren Einkauf bei <strong>{shop_name}</strong>.</p>
-</td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td style="background-color: {color}; color: #fff; font-size: 12px; font-weight: bold; padding: 0.5em 1em;" align="left">Details zu Ihrer Bestellung</td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td align="left">Bestellung: <strong><span style="color: {color};">{order_name}</span> vom {date}</strong><br /> Zahlung: <strong>{payment}</strong></td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td align="left">
-<table style="width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #374953;"><!-- Title -->
+<td style="font-size: 10px; " align="center">
+<p> </p>
+<p><span style="font-size: 18pt;"><strong>SEPA-Lastschrift-Mandat</strong></span></p>
+<address style="text-align: left;"><span style="font-size: 10pt;">Zahlungsempf&auml;nger:
+<strong>{shop_name}</strong><br>
+</span></address>
+<address style="text-align: left;"><span style="font-size: 10pt;">Gl&auml;ubiger-Identifikationsnummer:
+<strong>{Debit_identifier}</strong></span></address>
+<address style="text-align: left;"><span style="font-size: 10pt;">Mandatsreferenz:<strong>{order_name}</strong></span></address>
+<address style="text-align: left;"> </address>
+<br>
+<address style="text-align: left;"><span style="font-size: 10pt;">Ich
+erm&auml;chtige den Zahlungsempf&auml;nger, Zahlungen von meinem
+Konto mittels Lastschrift</span><span style="font-size: 10pt;">
+einzuziehen. Zugleich</span> <span style="font-size: 10pt;">weise
+ich mein Kreditinstitut an, die von dem Zahlungsempf&auml;nger
+auf mein Konto gezogenen Lastschriften einzul&ouml;sen.</span></address>
+<br>
+<address style="text-align: left;"><span style="font-size: 10pt;">Hinweis:
+Ich kann innerhalb von acht Wochen, beginnend mit dem
+Belastungsdatum, die Erstattung des belasteten Betrages
+verlangen. Es gelten dabei die mit meinem Kreditinstitut
+vereinbarten Bedingungen.</span></address>
+<address style="text-align: left;"><span style="font-size: 10pt;"><br>
+<table style="width: 100%; font-family: Verdana,sans-serif; font-size: 10pt; color: #374953;">
 <tbody>
-<tr style="background-color: #b9babe; text-align: center;"><th style="width: 15%; padding: 0.6em 0;">Artikelnr.</th><th style="width: 35%; padding: 0.6em 0;">Produkt</th><th style="width: 15%; padding: 0.6em 0;">St&uuml;ckpreis</th><th style="width: 15%; padding: 0.6em 0;">Menge</th><th style="width: 20%; padding: 0.6em 0;">Gesamtpreis</th></tr>
+<colgroup>
+    <col width="20">
+    <col width="100">
+  </colgroup>
 <tr>
-<td colspan="5">{products}</td>
+<td>Name des Zahlungspflichtigen:</td><td><b>{invoice_firstname} {invoice_lastname}</b></td>
 </tr>
 <tr>
-<td colspan="5">{discounts}</td>
+<td>Firma:</td><td><b>{invoice_company}</b></td>
 </tr>
-<tr style="text-align: right;">
-<td>&nbsp;</td>
-<td style="background-color: #b9babe; padding: 0.6em 0.4em;" colspan="3">Produkte</td>
-<td style="background-color: #b9babe; padding: 0.6em 0.4em;">{total_products}</td>
+<tr>
+<td>Stra&szlig;e und Hausnummer:</td><td><b><b>{invoice_address1} {invoice_address2}</b></b></td>
 </tr>
-<tr style="text-align: right;">
-<td>&nbsp;</td>
-<td style="background-color: #ebecee; padding: 0.6em 0.4em;" colspan="3">Rabatte</td>
-<td style="background-color: #ebecee; padding: 0.6em 0.4em;">{total_discounts}</td>
+<tr>
+<td>PostleitzahlOrt:</td><td><b><b>{invoice_postal_code} {invoice_city}</b></b></td>
 </tr>
-<tr style="text-align: right;">
-<td>&nbsp;</td>
-<td style="background-color: #ebecee; padding: 0.6em 0.4em;" colspan="3">Geschenkverpackung</td>
-<td style="background-color: #ebecee; padding: 0.6em 0.4em;">{total_wrapping}</td>
+<tr>
+<td>Land:</td><td><b><b>{invoice_country}</b></b></td>
 </tr>
-<tr style="text-align: right;">
-<td>&nbsp;</td>
-<td style="background-color: #dde2e6; padding: 0.6em 0.4em;" colspan="3">Versand</td>
-<td style="background-color: #dde2e6; padding: 0.6em 0.4em;">{total_shipping}</td>
+<tr>
+<td>E-Mail:</td><td><b><b>{email}</b></b></td>
 </tr>
-<tr style="text-align: right; font-weight: bold;">
-<td>&nbsp;</td>
-<td style="background-color: #b9babe; padding: 0.6em 0.4em;" colspan="3">Gesamt</td>
-<td style="background-color: #b9babe; padding: 0.6em 0.4em;">{total_paid}</td>
+<tr>
+<td>Swift BIC:</td><td><b><b>{BankBIC}</b></b></td>
+</tr>
+<tr>
+<td>Bankkontonummer-IBAN:</td><td><b><b>{BankIBAN}</b></b></td>
 </tr>
 </tbody>
 </table>
+</span>
+</address>
+<br>
+<tr>
+<address style="text-align: left;">
+<b>
+<td><span style="font-size: 10pt;"><b>{invoice_city}, {date}, {invoice_firstname}
+{invoice_lastname}</b>
+</span></td>
+</b>
+</address>
+</tr>
 </td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td style="background-color: {color}; color: #fff; font-size: 12px; font-weight: bold; padding: 0.5em 1em;" align="left">Versand</td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td align="left">Spediteur: <strong>{carrier}</strong></td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td>
-<table style="width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #374953;">
 <tbody>
-<tr style="background-color: #b9babe; text-transform: uppercase;"><th style="text-align: left; padding: 0.3em 1em;">Lieferanschrift</th><th style="text-align: left; padding: 0.3em 1em;">Rechnungsanschrift</th></tr>
-<tr>
-<td style="padding: 0.5em 0 0.5em 0.5em; background-color: #ebecee;">{delivery_block_html}</td>
-<td style="padding: 0.5em 0 0.5em 0.5em; background-color: #ebecee;">{invoice_block_html}</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td align="left">Sie k&ouml;nnen diese Bestellung ansehen und Ihre Rechnung aus dem Abschnitt <a style="color: {color}; font-weight: bold; text-decoration: none;" href="{history_url}">"Bestellverlauf"</a> Ihres Kontos downloaden, indem Sie auf unserer Webseite auf <a style="color: {color}; font-weight: bold; text-decoration: none;" href="{my_account_url}">"Mein Konto"</a> klicken.</td>
-</tr>
-<tr>
-<td align="left">Wenn Sie ein Gast-Konto haben, k&ouml;nnen Sie Ihre Bestellung im Abschnitt <a style="color: {color}; font-weight: bold; text-decoration: none;" href="{guest_tracking_url}">"Bestellverfolgung Gast"</a> auf unserer Webseite verfolgen.</td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-</tr>
-<tr>
-<td style="font-size: 10px; border-top: 1px solid #D9DADE;" align="center"><a style="color: {color}; font-weight: bold; text-decoration: none;" href="{shop_url}">{shop_name}</a> powered by <a style="text-decoration: none; color: #374953;" href="http://www.prestashop.com/">PrestaShop&trade;</a></td>
-</tr>
-</tbody>
 </table>
 </body>
 </html>

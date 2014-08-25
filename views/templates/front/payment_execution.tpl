@@ -36,18 +36,18 @@ width: 250px;
 
 
 {capture name=path}{l s='Payment with Debit Note' mod='debitnote'}{/capture}
-{include file="{$tpl_dir}/breadcrumb.tpl"} 
+{include file="$tpl_dir./breadcrumb.tpl"} 
 
-<h2>{l s='Order summary' mod='debitnote' mod='debitnote'}</h2>
+<h2>{l s='Order summary' mod='debitnote'}</h2>
 
 {assign var='current_step' value='payment'}
-{include file="{$tpl_dir}/order-steps.tpl"} 
+{include file="$tpl_dir./order-steps.tpl"} 
 
 <h3>{l s='Payment Details for Debit Note' mod='debitnote'}</h3><img src="{$this_path_ssl}debitnote.png" style="float: right;" />
 
 <h4 style="float: left;">{l s='Your Account will be carged with the amount of' mod='debitnote'} {convertPrice price=$total_price}  </h4>
 
-<form action="{$this_path_ssl}validation.php" method="post" class="std" onsubmit="return acceptDNC('{l s='Please accept the terms of Paying with DebitNote before the next step.' mod='debitnote' js=1}');">
+<form action="{$link->getModuleLink('debitnote', 'validation', [], true)|escape:'html'}" method="post" class="std" onsubmit="return acceptDNC('{l s='Please accept the terms of Paying with DebitNote before the next step.' mod='debitnote' js=1}');">
 
 <script type='text/javascript'>$('a.iframe').fancybox();</script>
 
@@ -63,7 +63,7 @@ width: 250px;
             <input type="text" name="bank_name" id="bank_name" value="{$bank_name}" size="44"/>
             <sup>*</sup>
 </p>
-<p class="required text">
+<!--<p class="required text">
             <label for="bank_code">{l s='Code of Bank:' mod='debitnote'}</label>
             <input type="text" name="bank_code" id="bank_code" value="{$bank_code}" size="15"/>
             <sup>*</sup>
@@ -73,17 +73,19 @@ width: 250px;
             <input type="text" name="account_number" id="account_number" value="{$account_number}" size="25"/>
             <sup>*</sup>
 </p>
-<p class="info">{l s='If you do not have an account in Austria, please also fill in the BIC and IBAN:' mod='debitnote'}</p>
-<p class="text">
-            <label for="bank_bic">{l s='BIC:' mod='debitnote'}</label>
-            <input type="text" name="bank_bic" id="bank_bic" value="{$bank_bic}" size="25"/>
-       
-</p>
-<p class="text">
+
+<p class="info">{l s='If you do not have an account in Austria, please also fill in the BIC and IBAN:' mod='debitnote'}</p>-->
+<p class="required text">
             <label for="bank_iban">{l s='IBAN:' mod='debitnote'}</label>
             <input type="text" name="bank_iban" id="bank_iban" value="{$bank_iban}" size="50"/>
-          
+			<sup>*</sup>
 </p>
+<p class="required text">
+            <label for="bank_bic">{l s='BIC:' mod='debitnote'}</label>
+            <input type="text" name="bank_bic" id="bank_bic" value="{$bank_bic}" size="25"/>
+			<sup>*</sup>
+</p>
+
 <p class="text">
             <label for="user_ip">{l s='Your IP:' mod='debitnote'}</label>
             &nbsp;{$this_user_ip}

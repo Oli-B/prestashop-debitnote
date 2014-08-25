@@ -16,23 +16,18 @@ class DebitNote extends PaymentModule
 {
     private     $_html = '';
     private     $_postErrors = array();
+	
+	public $extra_mail_vars;
     
     public function __construct()
     {
         $this->name = "debitnote";
         $this->tab  = "payments_gateways";
-        $this->version = '0.1.5';
+        $this->version = '0.2.1';
         
         $this->currencies = true;
 		$this->currencies_mode = 'checkbox';
         
-       /* 
-        $config = Configuration::getMultiple(array('MUST_ACCEPT_CONDITIONS', 'CONDITIONS_TEXT_CMS_ID'));
-        if (isset($config['MUST_ACCEPT_CONDITIONS']))
-            $this->mustAccCond = $config['MUST_ACCEPT_CONDITIONS'];
-        if (isset($config['CONDITIONS_TEXT_CMS_ID']))
-            $this->CondCMSid = $config['CONDITIONS_TEXT_CMS_ID'];
-       */
         parent::__construct();
         
         $this->page = basename(__FILE__, '.php');
@@ -42,20 +37,7 @@ class DebitNote extends PaymentModule
         
         if (!sizeof(Currency::checkPaymentCurrencies($this->id)))
 			$this->warning = $this->l('No currency set for this module');
-    
-	$this->extra_mail_vars = array(
-            '{AccountHolderName}' => $debitNoteDetails['accountholder_name'],
-            '{BankName}' => $debitNoteDetails['bank_name'],
-            '{BankCode}' => $debitNoteDetails['bank_code'],
-            '{AccountNumber}' => $debitNoteDetails['account_number'],
-            '{BankBIC}' => $debitNoteDetails['bank_bic'],
-            '{BankIBAN}' => $debitNoteDetails['bank_iban'],
-            '{id_order}' => $id_order,
-            '{this_page}' => $_SERVER['REQUEST_URI'],
-            '{this_path}' => $this->_path,
-            '{this_path_ssl}' => Configuration::get('PS_FO_PROTOCOL').$_SERVER['HTTP_HOST'].__PS_BASE_URI__."modules/{$this->name}/");
-	
-	
+    	
 	}
     
     
@@ -69,7 +51,8 @@ class DebitNote extends PaymentModule
 			$this->registerHook('payment') &&
 			$this->registerHook('paymentReturn') &&
 			$this->createDebitNoteTable() &&
-			$this->createOrderState();
+			$this->createOrderState()&&
+			Configuration::updateValue('DEBITNOTE_CREDITOR_IDENTIFIER', DEXXXX);
 			
     }
     
@@ -79,15 +62,8 @@ class DebitNote extends PaymentModule
 			OR !Db::getInstance()->delete('ps_order_state', 'id_order_state ='.Configuration::get('PS_OS_DEBITNOTE'),10)
 			OR !Db::getInstance()->delete('ps_order_state_lang', 'id_order_state ='.Configuration::get('PS_OS_DEBITNOTE'),10)
 			OR !Configuration::deleteByName('PS_OS_DEBITNOTE')
-           // OR !Configuration::deleteByName('MUST_ACCEPT_CONDITIONS')
-            //OR !Configuration::deleteByName('CONDITIONS_TEXT_CMS_ID')
+			OR !Configuration::deleteByName('DEBITNOTE_CREDITOR_IDENTIFIER')
             OR !parent::uninstall()
-			
-			
-			//OR !Db::getInstance()->Execute('DELETE FROM `'._DB_PREFIX_.'order_state`
-			//	WHERE `id_order_state` ='.$order_state->id');
-			//OR !Db::getInstance()->Execute('DELETE FROM `'._DB_PREFIX_.'order_state_lang`
-			//	WHERE `id_order_state` ='.$order_state->id');
 			)
 	return false;
 	
@@ -133,15 +109,9 @@ class DebitNote extends PaymentModule
 				$sourcemail = dirname(__FILE__).'/mails/';
 				$destinationmail = dirname(__FILE__).'/../../mails/';
 				$this->CopyMailFolder($sourcemail, $destinationmail);
-			//	$sourcemail2 = dirname(__FILE__).'/mails/en/debitnote.txt';
-			//	$destinationmail2 = dirname(__FILE__).'/../../mails/de/debitnote.txt';
-			//	copy($sourcemail1, $destinationmail1);
-			//	copy($sourcemail2, $destinationmail2);
 			}
 			Configuration::updateValue('PS_OS_DEBITNOTE', (int)$order_state->id);
-	//		Configuration::updateValue('PAYPAL_OS_AUTHORIZATION', (int)$order_state->id);
-	//		Configuration::updateValue('PAYPAL_OS_AUTHORIZATION', (int)$order_state->id);
-		}
+			}
 	}
 	
     
@@ -197,18 +167,18 @@ class DebitNote extends PaymentModule
 
     function hookPayment($params)
     {
-        global $smarty;
-        
+                
         if (!$this->active)
 	    return ;
-	if (!$this->_checkCurrency($params['cart']))
+		if (!$this->checkCurrency($params['cart']))
 	    return ;
        
         
-        $smarty->assign(array(
-                    'this_path' => $this->_path,
-                    'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
-                    ));
+        $this->smarty->assign(array(
+            'this_path' => $this->_path,
+			'this_path_debitnote' => $this->_path,
+            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->name.'/'
+        ));
         Tools::safePostVars();
 	$css_files = array(__PS_BASE_URI__.'css/thickbox.css' => 'all');
         
@@ -342,8 +312,102 @@ class DebitNote extends PaymentModule
 
     private function _postValidation()
     {
-        
+       if (Tools::isSubmit('btnSubmit'))
+		{
+			if (!Tools::getValue('name'))
+				$this->_postErrors[] = $this->l('\'The "To the order of" field is required.');
+			elseif (!Tools::getValue('address'))
+				$this->_postErrors[] = $this->l('Address is required.');
+		} 
     }
+	
+	public function getContent()
+	{
+		$output = null;
+		
+		if (Tools::isSubmit('submit'.$this->name))
+			{
+				$debitidentifier = strval(Tools::getValue('DEBITNOTE_CREDITOR_IDENTIFIER'));
+				if (!$debitidentifier  || empty($debitidentifier) || !Validate::isGenericName($debitidentifier)
+					)
+					$output .= $this->displayError( $this->l('Invalid Configuration values') ); 
+				else
+				{
+					Configuration::updateValue('DEBITNOTE_CREDITOR_IDENTIFIER', $debitidentifier);
+					
+					
+					$output .= $this->displayConfirmation($this->l('Settings updated'));
+				}
+			}
+			return $output.$this->displayForm();
+		
+	}
+	
+	public function displayForm()
+			{
+				// Get default Language
+				$default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+				 
+				// Init Fields form array
+				$fields_form[0]['form'] = array(
+					'legend' => array(
+						'title' => $this->l('Settings'),
+					),
+					'input' => array( 
+						array(
+							'type' => 'text',
+							'label' => $this->l('Creditor Identifier'),
+							'name' => 'DEBITNOTE_CREDITOR_IDENTIFIER',
+							'size' => 50,
+							'required' => true
+						),	
+						
+						
+					),
+					
+					'submit' => array(
+						'title' => $this->l('Save'),
+						'class' => 'button'
+					)
+				);
+				 
+				$helper = new HelperForm();
+				 
+				// Module, t    oken and currentIndex
+				$helper->module = $this;
+				$helper->name_controller = $this->name;
+				$helper->token = Tools::getAdminTokenLite('AdminModules');
+				$helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+				 
+				// Language
+				$helper->default_form_language = $default_lang;
+				$helper->allow_employee_form_lang = $default_lang;
+				 
+				// Title and toolbar
+				$helper->title = $this->displayName;
+				$helper->show_toolbar = true;        // false -> remove toolbar
+				$helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
+				$helper->submit_action = 'submit'.$this->name;
+				$helper->toolbar_btn = array(
+					'save' =>
+					array(
+						'desc' => $this->l('Save'),
+						'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
+						'&token='.Tools::getAdminTokenLite('AdminModules'),
+					),
+					'back' => array(
+						'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
+						'desc' => $this->l('Back to list')
+					)
+				);
+				 
+				// Load current value
+				$helper->fields_value['DEBITNOTE_CREDITOR_IDENTIFIER'] = Configuration::get('DEBITNOTE_CREDITOR_IDENTIFIER');
+				
+				 
+				return $helper->generateForm($fields_form);
+			}	
+	
     private function _checkCurrency($cart)
 	{
 		$currency_order = new Currency(intval($cart->id_currency));
@@ -355,6 +419,19 @@ class DebitNote extends PaymentModule
 				if ($currency_order->id == $currency_module['id_currency'])
 					return true;
 	}
+	
+	public function checkCurrency($cart)
+	{
+		$currency_order = new Currency((int)($cart->id_currency));
+		$currencies_module = $this->getCurrency((int)$cart->id_currency);
+
+		if (is_array($currencies_module))
+			foreach ($currencies_module as $currency_module)
+				if ($currency_order->id == $currency_module['id_currency'])
+					return true;
+		return false;
+	}
+	
 	private function CopyMailFolder($source, $dest, $options=array('folderPermission'=>0744,'filePermission'=>0744))
     {
 	/**

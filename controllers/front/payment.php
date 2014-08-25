@@ -17,8 +17,8 @@ class DebitnotePaymentModuleFrontController extends ModuleFrontController
 		parent::initContent();
 
 		$cart = $this->context->cart;
-		if (!$this->module->checkCurrency($cart))
-			Tools::redirect('index.php?controller=order');
+	//	if (!$this->module->checkCurrency($cart))
+	//		Tools::redirect('index.php?controller=order');
 
 		$this->context->smarty->assign(array(
 			'nbProducts' => $cart->nbProducts(),
@@ -26,6 +26,7 @@ class DebitnotePaymentModuleFrontController extends ModuleFrontController
 			'currencies' => $this->module->getCurrency((int)$cart->id_currency),
 			'total' => $cart->getOrderTotal(true, Cart::BOTH),
 			'this_path' => $this->module->getPathUri(),
+			'this_path_debitnote' => $this->module->getPathUri(),
 			'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'modules/'.$this->module->name.'/'
 		));
 
